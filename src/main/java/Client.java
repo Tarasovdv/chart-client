@@ -5,6 +5,7 @@ import java.net.Socket;
 public class Client {
     private final static String IP = "localhost";
     private final static int PORT = 8080;
+//    Menu menuChat = new Menu();
 
     @SneakyThrows
     public void start() {
@@ -14,7 +15,11 @@ public class Client {
             MessageReceiver messageConsoleReceiver = new MessageReceiver(System.in);
             MessageSender messageSender = new MessageSender(socket.getOutputStream());
 
-            registration(messageConsoleReceiver, messageSender);
+//            menuChat.menu();
+
+            autorization(messageConsoleReceiver, messageSender);
+////            registration(messageConsoleReceiver, messageSender);
+//            delete(messageConsoleReceiver,messageSender);
 
             new Thread(new SockedRunnable(socket)).start();
 
@@ -36,8 +41,35 @@ public class Client {
         System.out.println("Введите пароль: ");
         String password = messageReceiver.readMessage();
 
+        messageSender.sendMessage("Registration " + name + " " + password);
+//        messageSender.sendMessage(password);
+
+    }
+
+    public void autorization(MessageReceiver messageReceiver, MessageSender messageSender) {
+        System.out.println("Добро пожаловать!\nАвторизация:\n");
+
+        System.out.println("Введите имя: ");
+        String name = messageReceiver.readMessage();
+        System.out.println("Введите пароль: ");
+        String password = messageReceiver.readMessage();
+
         messageSender.sendMessage("Autorization " + name + " " + password);
 //        messageSender.sendMessage(password);
 
     }
+    public void delete(MessageReceiver messageReceiver, MessageSender messageSender) {
+        System.out.println("удаление\n");
+
+        System.out.println("Введите имя: ");
+        String name = messageReceiver.readMessage();
+//        System.out.println("Введите пароль: ");
+//        String password = messageReceiver.readMessage();
+
+        messageSender.sendMessage("Delete " + name);
+//        messageSender.sendMessage(password);
+
+    }
+
+
 }
