@@ -6,7 +6,6 @@ public class Application {
     public static void main(String[] args) {
 
 
-
         new Client().start();
 
 //        Locale locale = new Locale("en","US");

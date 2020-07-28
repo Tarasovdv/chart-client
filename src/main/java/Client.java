@@ -2,8 +2,8 @@ import lombok.SneakyThrows;
 import utils.MyResourceBundle;
 import utils.Props;
 
-import java.io.BufferedReader;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class Client {
@@ -21,70 +21,67 @@ public class Client {
             MessageReceiver messageConsoleReceiver = new MessageReceiver(System.in);
             MessageSender messageSender = new MessageSender(socket.getOutputStream());
 
-            registrationOrAutorization(messageConsoleReceiver, messageSender);
-
-
-//            delete(messageConsoleReceiver, messageSender);
-//            setLogin(messageConsoleReceiver, messageSender);
-//            setPassword(messageConsoleReceiver, messageSender);
+            registrationOrAuthorization(messageConsoleReceiver, messageSender);
 
             new Thread(new SockedRunnable(socket)).start();
             String messageFromConsole;
 
-            menu(messageConsoleReceiver, messageSender);
+//            menu(messageConsoleReceiver, messageSender);
 
             while ((messageFromConsole = messageConsoleReceiver.readMessage()) != null) {
+
+                if (messageFromConsole.startsWith("меню")) {
+                    int num = Integer.parseInt(messageFromConsole.substring(4).trim());
+                    menu(num, messageSender);
+                }
+
                 messageSender.sendMessage(messageFromConsole);
             }
         }
     }
 
-    public void menu(MessageReceiver messageReceiver, MessageSender messageSender) {
-        System.out.println("-----------------------");
-        System.out.println(RESOURCE_BUNDLE.getValue("welcomeChat"));
-        System.out.println("-----------------------");
-        System.out.println(RESOURCE_BUNDLE.getValue("menuChat"));
+    public static void printMenu() {
+        System.out.println(RESOURCE_BUNDLE.getValue("mainMenu"));
+    }
 
-        int numFromConsole = Integer.parseInt(messageReceiver.readMessage().trim());
+    public void menu(int numMenu, MessageSender messageSender) {
+        MessageReceiver messageConsoleReceiver = new MessageReceiver(System.in);
+        System.out.print("\nВведите номер меню:");
 
-            if (numFromConsole == 1) {
-                System.out.println("-----------------------");
-                System.out.println(RESOURCE_BUNDLE.getValue("welcomeMessage"));
-                System.out.println("-----------------------");
-                System.out.println(RESOURCE_BUNDLE.getValue("menuMessage"));
+        printMenu();
+        if (numMenu == 1) {
+            createMessage(messageConsoleReceiver, messageSender);
 
-                int numFromConsoleMessage = Integer.parseInt(messageReceiver.readMessage().trim());
-                if (numFromConsoleMessage == 1) {
-                    System.out.println(RESOURCE_BUNDLE.getValue("createMessage"));
-                }
 
-            } else if (numFromConsole == 2) {
-                System.out.println("-----------------------");
-                System.out.println(RESOURCE_BUNDLE.getValue("welcomeSettings"));
-                System.out.println("-----------------------");
-                System.out.println(RESOURCE_BUNDLE.getValue("menuSettings"));
+        } else if (numMenu == 2) {
 
-                int numFromConsoleSettings = Integer.parseInt(messageReceiver.readMessage().trim());
-                if (numFromConsoleSettings == 1) {
-                    System.out.println(RESOURCE_BUNDLE.getValue("changeName"));
-                } else if (numFromConsoleSettings == 2) {
-                    System.out.println(RESOURCE_BUNDLE.getValue("changePassword"));
-                } else if (numFromConsoleSettings == 3) {
-                    MessageReceiver messageConsoleReceiver = new MessageReceiver(System.in);
-//                System.out.println(RESOURCE_BUNDLE.getValue("delete"));
-                    delete(messageConsoleReceiver, messageSender);
+        } else if (numMenu == 3) {
+            setLogin(messageConsoleReceiver, messageSender);
+        } else if (numMenu == 4) {
+            setPassword(messageConsoleReceiver, messageSender);
+        } else if (numMenu == 5) {
+            delete(messageConsoleReceiver, messageSender);
+        } else if (numMenu == 0) {
+            System.exit(0);
+        }
 
-                }
-            }
 
 
     }
 
-    public void registrationOrAutorization(MessageReceiver messageReceiver, MessageSender messageSender) {
+    public void createMessage(MessageReceiver messageReceiver, MessageSender messageSender) {
+        System.out.println(RESOURCE_BUNDLE.getValue("createMessage"));
+        String text = getString(messageReceiver, RESOURCE_BUNDLE.getValue("enterText")).toUpperCase();
+        messageSender.sendMessage(RESOURCE_BUNDLE.getValue("createMessage") + text);
+
+    }
+
+
+    public void registrationOrAuthorization(MessageReceiver messageReceiver, MessageSender messageSender) {
         System.out.println("-----------------------");
         System.out.println(RESOURCE_BUNDLE.getValue("welcome"));
         System.out.println("-----------------------");
-        System.out.println(RESOURCE_BUNDLE.getValue("menu"));
+        System.out.println(RESOURCE_BUNDLE.getValue("menuRegAuth"));
 
         int numFromConsole = Integer.parseInt(messageReceiver.readMessage().trim());
 
@@ -101,7 +98,7 @@ public class Client {
         } else {
             System.err.println(RESOURCE_BUNDLE.getValue("enter") + "1 "
                     + RESOURCE_BUNDLE.getValue("or") + " 2");
-            registrationOrAutorization(messageReceiver, messageSender);
+            registrationOrAuthorization(messageReceiver, messageSender);
         }
     }
 
@@ -123,9 +120,10 @@ public class Client {
 
     public void setPassword(MessageReceiver messageReceiver, MessageSender messageSender) {
         System.out.println(RESOURCE_BUNDLE.getValue("changePassword"));
+        String name = getString(messageReceiver, RESOURCE_BUNDLE.getValue("enterName")).toUpperCase();
         String oldPassword = getString(messageReceiver, RESOURCE_BUNDLE.getValue("oldPassword")).toUpperCase();
         String newPassword = getString(messageReceiver, RESOURCE_BUNDLE.getValue("newPassword")).toUpperCase();
-        messageSender.sendMessage(RESOURCE_BUNDLE.getValue("changeName") + oldPassword + " " + newPassword);
+        messageSender.sendMessage(RESOURCE_BUNDLE.getValue("changePassword") + name + " " + oldPassword + " " + newPassword);
 
     }
 
