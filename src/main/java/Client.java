@@ -24,57 +24,108 @@ public class Client {
             registrationOrAuthorization(messageConsoleReceiver, messageSender);
 
             new Thread(new SockedRunnable(socket)).start();
-            String messageFromConsole;
+            System.out.println(RESOURCE_BUNDLE.getValue("mainMenu"));
 
-//            menu(messageConsoleReceiver, messageSender);
+            messageInChat(messageConsoleReceiver, messageSender);
 
-            while ((messageFromConsole = messageConsoleReceiver.readMessage()) != null) {
-
-                if (messageFromConsole.startsWith("меню")) {
-                    int num = Integer.parseInt(messageFromConsole.substring(4).trim());
-                    menu(num, messageSender);
-                }
-
-                messageSender.sendMessage(messageFromConsole);
-            }
+//            while ((messageFromConsole = messageConsoleReceiver.readMessage()) != null) {
+//                System.out.println("MENU");
+//
+//                if (messageFromConsole.startsWith("меню")) {
+//                    int num = Integer.parseInt(messageFromConsole.substring(4).trim());
+//                    menu(num, messageSender);
+//                }
+//
+//                messageSender.sendMessage(messageFromConsole);
+//            }
         }
     }
+
+    public void messageInChat(MessageReceiver messageConsoleReceiver, MessageSender messageSender) {
+        String messageFromConsole;
+
+        while ((messageFromConsole = messageConsoleReceiver.readMessage()) != null) {
+            System.out.println("--------");
+            if ((messageFromConsole.startsWith("м1")) || (messageFromConsole.startsWith("m1"))) {
+                System.out.println("|     m0    |" + "\n"
+                        + "| Exit chat |");
+                System.out.println("Chat:");
+//                MessageReceiver message = new MessageReceiver(System.in);
+//                String mess;
+                while (!(messageFromConsole = messageConsoleReceiver.readMessage()).contains("m0")) {
+                    messageSender.sendMessage(messageFromConsole);
+                    createMessage(messageConsoleReceiver, messageSender);
+                }
+                System.out.println("exit chat");
+//                System.exit(0);
+
+            } else if ((messageFromConsole.startsWith("м2")) || (messageFromConsole.startsWith("m2"))) {
+                setLogin(messageConsoleReceiver, messageSender);
+            } else if ((messageFromConsole.startsWith("м3")) || (messageFromConsole.startsWith("m3"))) {
+                setPassword(messageConsoleReceiver, messageSender);
+            } else if ((messageFromConsole.startsWith("м4")) || (messageFromConsole.startsWith("m4"))) {
+                delete(messageConsoleReceiver, messageSender);
+            } else if ((messageFromConsole.startsWith("м5")) || (messageFromConsole.startsWith("m5"))) {
+                System.exit(0);
+            }
+            System.out.println(RESOURCE_BUNDLE.getValue("mainMenu"));
+
+
+//            if ((messageFromConsole.startsWith("меню")) || (messageFromConsole.startsWith("menu"))) {
+////                int num = Integer.parseInt(messageFromConsole.substring(4).trim());
+//                System.out.println("менюююю");
+////                menu(num, messageSender);
+//            }
+
+        }
+
+    }
+
 
     public static void printMenu() {
         System.out.println(RESOURCE_BUNDLE.getValue("mainMenu"));
     }
 
-    public void menu(int numMenu, MessageSender messageSender) {
-        MessageReceiver messageConsoleReceiver = new MessageReceiver(System.in);
-        System.out.print("\nВведите номер меню:");
-
-        printMenu();
-        if (numMenu == 1) {
-            createMessage(messageConsoleReceiver, messageSender);
-
-
-        } else if (numMenu == 2) {
-
-        } else if (numMenu == 3) {
-            setLogin(messageConsoleReceiver, messageSender);
-        } else if (numMenu == 4) {
-            setPassword(messageConsoleReceiver, messageSender);
-        } else if (numMenu == 5) {
-            delete(messageConsoleReceiver, messageSender);
-        } else if (numMenu == 0) {
-            System.exit(0);
-        }
-
-
-
-    }
+//    public void menu(int numMenu, MessageSender messageSender) {
+//        MessageReceiver messageConsoleReceiver = new MessageReceiver(System.in);
+//        System.out.print("\nВведите номер меню:");
+//
+//        printMenu();
+//        if (numMenu == 1) {
+////            createMessage(messageConsoleReceiver, messageSender);
+//
+//
+//        } else if (numMenu == 2) {
+//
+//        } else if (numMenu == 3) {
+//            setLogin(messageConsoleReceiver, messageSender);
+//        } else if (numMenu == 4) {
+//            setPassword(messageConsoleReceiver, messageSender);
+//        } else if (numMenu == 5) {
+//            delete(messageConsoleReceiver, messageSender);
+//        } else if (numMenu == 0) {
+//            System.exit(0);
+//        }
+//
+//
+//    }
 
     public void createMessage(MessageReceiver messageReceiver, MessageSender messageSender) {
-        System.out.println(RESOURCE_BUNDLE.getValue("createMessage"));
-        String text = getString(messageReceiver, RESOURCE_BUNDLE.getValue("enterText")).toUpperCase();
-        messageSender.sendMessage(RESOURCE_BUNDLE.getValue("createMessage") + text);
+//        System.out.println(RESOURCE_BUNDLE.getValue("createMessage"));
+//        String text = getString(messageReceiver, RESOURCE_BUNDLE.getValue("enterText")).toUpperCase();
+        String text = getText(messageReceiver).toUpperCase();
+//        messageSender.sendMessage(RESOURCE_BUNDLE.getValue("createMessage") + text);
+        messageSender.sendMessage("->" + text);
 
     }
+
+
+//    public static void createMessage(String message, MessageSender messageSender) {
+////        System.out.println(RESOURCE_BUNDLE.getValue("createMessage"));
+////        String text = getText(messageReceiver).toUpperCase();
+//        messageSender.sendMessage("->" + message);
+
+//    }
 
 
     public void registrationOrAuthorization(MessageReceiver messageReceiver, MessageSender messageSender) {
@@ -130,6 +181,11 @@ public class Client {
 
     private String getString(MessageReceiver messageReceiver, String userHint) {
         System.out.println(userHint);
+        return messageReceiver.readMessage().trim();
+    }
+
+    private String getText(MessageReceiver messageReceiver) {
+//        System.out.println(userHint);
         return messageReceiver.readMessage().trim();
     }
 
