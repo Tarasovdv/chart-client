@@ -47,14 +47,14 @@ public class Client {
         while ((messageFromConsole = messageConsoleReceiver.readMessage()) != null) {
             System.out.println("--------");
             if ((messageFromConsole.startsWith("м1")) || (messageFromConsole.startsWith("m1"))) {
-                System.out.println("|     m0    |" + "\n"
-                        + "| Exit chat |");
+                System.out.println("|  m0  >> Exit chat  |");
                 System.out.println("Chat:");
 //                MessageReceiver message = new MessageReceiver(System.in);
 //                String mess;
                 while (!(messageFromConsole = messageConsoleReceiver.readMessage()).contains("m0")) {
-                    messageSender.sendMessage(messageFromConsole);
-                    createMessage(messageConsoleReceiver, messageSender);
+
+                    messageSender.sendMessage("->" + messageFromConsole);
+//                    createMessage(messageFromConsole, messageSender);
                 }
                 System.out.println("exit chat");
 //                System.exit(0);
@@ -110,12 +110,12 @@ public class Client {
 //
 //    }
 
-    public void createMessage(MessageReceiver messageReceiver, MessageSender messageSender) {
+    public void createMessage(String text, MessageSender messageSender) {
 //        System.out.println(RESOURCE_BUNDLE.getValue("createMessage"));
 //        String text = getString(messageReceiver, RESOURCE_BUNDLE.getValue("enterText")).toUpperCase();
-        String text = getText(messageReceiver).toUpperCase();
+
 //        messageSender.sendMessage(RESOURCE_BUNDLE.getValue("createMessage") + text);
-        messageSender.sendMessage("->" + text);
+        messageSender.sendMessage("->" + text.toUpperCase());
 
     }
 
